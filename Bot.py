@@ -12,20 +12,46 @@ class Bot:
         #self.image = pygame.transform.scale(pygame.image.load(image).convert_alpha(), width, height)
         self.color = color
 
+        self.broken = False
+        self.movementEnabled = False
+
     def FindTile(self):
         for tile in self.listOfTiles:
             if tile.rect.centerx == self.rect.centerx and tile.rect.centery == self.rect.centery:
                 return tile
 
     def Down(self):
-        self.rect.y += self.tileHeight
+        if not self.FindTile().wallSouth:
+            self.rect.y += 80
+            if self.FindTile() != None:
+                if self.FindTile().wallNorth:
+                    self.rect.y -= 80
+            else:
+                self.rect.y -= 80
     def Up(self):
-        self.rect.y -= self.tileHeight
+        if not self.FindTile().wallNorth:
+            self.rect.y -= 80
+            if self.FindTile() != None:
+                if self.FindTile().wallSouth:
+                    self.rect.y += 80
+            else:
+                self.rect.y += 80
     def Left(self):
-        self.rect.x -= self.tileWidth
+        if not self.FindTile().wallWest:
+            self.rect.x -= 80
+            if self.FindTile() != None:
+                if self.FindTile().wallEast:
+                    self.rect.x += 80
+            else:
+                self.rect.x += 80
     def Right(self):
-        self.rect.x += self.tileWidth
-
+        if not self.FindTile().wallEast:
+            self.rect.x += 80
+            if self.FindTile() != None:
+                if self.FindTile().wallWest:
+                    self.rect.x -= 80
+            else:
+                self.rect.x -= 80
     def Color(self):
         self.FindTile().Color((255, 0, 0))
 
@@ -107,13 +133,27 @@ def UpdateTiles(listOfTiles):
             pygame.draw.line(window, (255, 255, 0), (tile.rect.x + tile.rect.width, tile.rect.y), (tile.rect.x + tile.rect.width, tile.rect.y + tile.rect.height), 5)
 
 listOfTiles = []
-for x in range(0, 640, 80):
-    for y in range(0, 640, 80):
+for x in range(640, -80, -80):
+    for y in range(640, -80, -80):
         tile = Tile(x, y, 80, 80, (0, 255, 0), False, False, False, False, False, False, False, False)
         listOfTiles.append(tile)
 bot = Bot(20, 20, 40, 40, 80, 80, (0, 0, 0), listOfTiles)
 run = True
 ansCode = []
+
+
+bot.Down()
+bot.Left()
+
+for tile in listOfTiles:
+    if tile.rect.x == 0:
+        tile.wallWest = True
+    if tile.rect.y == 0:
+        tile.wallNorth = True
+    if tile.rect.x == 640:
+        tile.wallEast = True
+    if tile.rect.y == 640:
+        tile.wallSouth = True
 
 while run:
     for event in pygame.event.get():
@@ -124,36 +164,54 @@ while run:
             keys = pygame.key.get_pressed()
             if keys[pygame.K_ESCAPE]:
                 run = False
-            if keys[pygame.K_w]:
-                ansCode.append("bot.Up()")
-                bot.rect.y -= 80
-            elif keys[pygame.K_s]:
-                ansCode.append("bot.Down()")
-                bot.rect.y += 80
-            elif keys[pygame.K_a]:
-                ansCode.append("bot.Left()")
-                bot.rect.x -= 80
-            elif keys[pygame.K_d]:
-                ansCode.append("bot.Right()")
-                bot.rect.x += 80
 
-            if keys[pygame.K_SPACE]:
-                if bot.FindTile().isColored == True:
-                    ansCode.append("bot.DeColor()")
-                    bot.DeColor()
-                else:
-                    ansCode.append("bot.Color()")
-                    bot.Color()
+            if bot.movementEnabled:
+                if keys[pygame.K_w] and bot.FindTile().wallNorth == False:
+                    ansCode.append("bot.Up()")
+                    bot.rect.y -= 80
+                    if bot.FindTile().wallSouth:
+                        bot.rect.y += 80
+                elif keys[pygame.K_s] and bot.FindTile().wallSouth == False:
+                    ansCode.append("bot.Down()")
+                    bot.rect.y += 80
+                    if bot.FindTile().wallNorth:
+                        bot.rect.y += 80
+                elif keys[pygame.K_a] and bot.FindTile().wallWest == False:
+                    ansCode.append("bot.Left()")
+                    bot.rect.x -= 80
+                    if bot.FindTile().wallEast:
+                        bot.rect.x += 80
+                elif keys[pygame.K_d] and bot.FindTile().wallEast == False:
+                    ansCode.append("bot.Right()")
+                    bot.rect.x += 80
+                    if bot.FindTile().wallWest:
+                        bot.rect.x -= 80
 
-            if keys[pygame.K_p]:
-                print("--------------------------------------")
-                for ans in ansCode:
-                    print(ans)
-                ansCode.clear()
+                if keys[pygame.K_SPACE]:
+                    if bot.FindTile().isColored == True:
+                        ansCode.append("bot.DeColor()")
+                        bot.DeColor()
+                    else:
+                        ansCode.append("bot.Color()")
+                        bot.Color()
+
+                if keys[pygame.K_p]:
+                    print("--------------------------------------")
+                    for ans in ansCode:
+                        print(ans)
+                    ansCode.clear()
 
             if keys[pygame.K_r]:
                 bot.rect.x, bot.rect.y = 20, 20
                 ansCode.clear()
+                for tile in listOfTiles:
+                    tile.DeColor()
+
+            if keys[pygame.K_t]:
+                if bot.movementEnabled:
+                    bot.movementEnabled = False
+                else:
+                    bot.movementEnabled = True
 
                 for tile in listOfTiles:
                     tile.DeColor()
