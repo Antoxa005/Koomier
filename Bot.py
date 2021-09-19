@@ -97,6 +97,15 @@ class Tile:
 
         self.image.fill(self.color)
 
+class Button:
+    def __init__(self, x, y, width, height, func):
+        self.func = func
+        self.rect = pygame.Rect(x, y, width, height)
+        self.color = (0, 0, 0)
+
+    def OnClick(self, point):
+        if self.rect.collidepoint(point):
+            self.func()
 
 pygame.init()
 info = pygame.display.Info()
@@ -105,32 +114,39 @@ window = pygame.display.set_mode((screenWidth, screenHeight), pygame.HWSURFACE |
 
 def UpdateTiles(listOfTiles):
     for tile in listOfTiles:
-
         pygame.draw.rect(window, tile.color, tile.rect)
-
         if tile.wallNorth:
             pygame.draw.line(window, (0, 0, 150), (tile.rect.x, tile.rect.y), (tile.rect.x + tile.rect.width, tile.rect.y), 5)
-
         else:
             pygame.draw.line(window, (255, 255, 0), (tile.rect.x, tile.rect.y), (tile.rect.x + tile.rect.width, tile.rect.y), 5)
-
         if tile.wallSouth:
             pygame.draw.line(window, (0, 0, 150), (tile.rect.x, tile.rect.y + tile.rect.height), (tile.rect.x + tile.rect.width, tile.rect.y + tile.rect.height), 5)
-
         else:
             pygame.draw.line(window, (255, 255, 0), (tile.rect.x, tile.rect.y + tile.rect.height), (tile.rect.x + tile.rect.width, tile.rect.y + tile.rect.height), 5)
-
         if tile.wallWest:
             pygame.draw.line(window, (0, 0, 150), (tile.rect.x, tile.rect.y), (tile.rect.x, tile.rect.y + tile.rect.height), 5)
-
         else:
             pygame.draw.line(window, (255, 255, 0), (tile.rect.x, tile.rect.y), (tile.rect.x, tile.rect.y + tile.rect.height), 5)
-
         if tile.wallEast:
             pygame.draw.line(window, (0, 0, 150), (tile.rect.x + tile.rect.width, tile.rect.y), (tile.rect.x + tile.rect.width, tile.rect.y + tile.rect.height), 5)
-
         else:
             pygame.draw.line(window, (255, 255, 0), (tile.rect.x + tile.rect.width, tile.rect.y), (tile.rect.x + tile.rect.width, tile.rect.y + tile.rect.height), 5)
+
+def ResetButtonClick():
+    bot.rect.x, bot.rect.y = 20, 20
+    ansCode.clear()
+    for tile in listOfTiles:
+        tile.DeColor()
+def PrintButtonClick():
+    print("--------------------------------------")
+    for ans in ansCode:
+        print(ans)
+    ansCode.clear()
+def ToggleMoveButtonClick():
+    if bot.movementEnabled:
+        bot.movementEnabled = False
+    else:
+        bot.movementEnabled = True
 
 listOfTiles = []
 for x in range(640, -80, -80):
@@ -141,9 +157,10 @@ bot = Bot(20, 20, 40, 40, 80, 80, (0, 0, 0), listOfTiles)
 run = True
 ansCode = []
 
-
-bot.Down()
-bot.Left()
+ResetButton = Button(800, 10, 80, 80, ResetButtonClick)
+PrintButton = Button(900, 10, 80, 80, PrintButtonClick)
+ToggleMoveButton = Button(1000, 10, 80, 80, ToggleMoveButtonClick)
+listOfButtons = [ResetButton, PrintButton, ToggleMoveButton]
 
 for tile in listOfTiles:
     if tile.rect.x == 0:
@@ -186,7 +203,6 @@ while run:
                     bot.rect.x += 80
                     if bot.FindTile().wallWest:
                         bot.rect.x -= 80
-
                 if keys[pygame.K_SPACE]:
                     if bot.FindTile().isColored == True:
                         ansCode.append("bot.DeColor()")
@@ -195,32 +211,29 @@ while run:
                         ansCode.append("bot.Color()")
                         bot.Color()
 
-                if keys[pygame.K_p]:
-                    print("--------------------------------------")
-                    for ans in ansCode:
-                        print(ans)
-                    ansCode.clear()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            left, middle, right = pygame.mouse.get_pressed()
 
-            if keys[pygame.K_r]:
-                bot.rect.x, bot.rect.y = 20, 20
-                ansCode.clear()
-                for tile in listOfTiles:
-                    tile.DeColor()
+            if left:
+                mousePos = pygame.mouse.get_pos()
+                for button in listOfButtons:
+                    button.OnClick(mousePos)
 
-            if keys[pygame.K_t]:
-                if bot.movementEnabled:
-                    bot.movementEnabled = False
-                else:
-                    bot.movementEnabled = True
+    mousePos = pygame.mouse.get_pos()
 
-                for tile in listOfTiles:
-                    tile.DeColor()
-
+    for button in listOfButtons:
+        if button.rect.collidepoint(mousePos):
+            button.color = (100, 100, 100)
+        else:
+            button.color = (0, 0, 0)
 
     window.fill((255, 255, 255))
 
     UpdateTiles(listOfTiles)
     pygame.draw.rect(window, bot.color, bot.rect)
+
+    for button in listOfButtons:
+        pygame.draw.rect(window, button.color, button.rect)
 
     pygame.display.update()
 pygame.quit()
