@@ -3,6 +3,7 @@ import pygame
 class Bot:
     def __init__(self, startX, startY, width, height, tileWidth, tileHeight, color, listOfTiles):
         self.rect = pygame.Rect(startX, startY, width, height)
+        self.newRect = pygame.Rect(startX, startY, width, height)
 
         self.tileWidth = tileWidth
         self.tileHeight = tileHeight
@@ -98,10 +99,11 @@ class Tile:
         self.image.fill(self.color)
 
 class Button:
-    def __init__(self, x, y, width, height, func):
+    def __init__(self, x, y, width, height, func, color):
         self.func = func
         self.rect = pygame.Rect(x, y, width, height)
-        self.color = (0, 0, 0)
+        self.color = color
+        self.ogColor = color
 
     def OnClick(self, point):
         if self.rect.collidepoint(point):
@@ -147,6 +149,9 @@ def ToggleMoveButtonClick():
         bot.movementEnabled = False
     else:
         bot.movementEnabled = True
+def TeleportButtonClick():
+    bot.rect = bot.newRect
+    fgfhbhnjj = 1
 
 listOfTiles = []
 for x in range(640, -80, -80):
@@ -157,10 +162,11 @@ bot = Bot(20, 20, 40, 40, 80, 80, (0, 0, 0), listOfTiles)
 run = True
 ansCode = []
 
-ResetButton = Button(800, 10, 80, 80, ResetButtonClick)
-PrintButton = Button(900, 10, 80, 80, PrintButtonClick)
-ToggleMoveButton = Button(1000, 10, 80, 80, ToggleMoveButtonClick)
-listOfButtons = [ResetButton, PrintButton, ToggleMoveButton]
+ResetButton = Button(800, 10, 80, 80, ResetButtonClick, (0, 0, 0))
+PrintButton = Button(900, 10, 80, 80, PrintButtonClick, (100, 180, 0))
+ToggleMoveButton = Button(1000, 10, 80, 80, ToggleMoveButtonClick, (50, 50, 125))
+TeleportButton = Button(1100, 10, 80, 80, TeleportButtonClick, (255, 0, 255))
+listOfButtons = [ResetButton, PrintButton, ToggleMoveButton, TeleportButton]
 
 for tile in listOfTiles:
     if tile.rect.x == 0:
@@ -225,7 +231,7 @@ while run:
         if button.rect.collidepoint(mousePos):
             button.color = (100, 100, 100)
         else:
-            button.color = (0, 0, 0)
+            button.color = button.ogColor
 
     window.fill((255, 255, 255))
 
