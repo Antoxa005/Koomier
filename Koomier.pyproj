@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>2b3c3c19-b55c-419f-8d59-f3c46995d366</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Bot.py</StartupFile>
+    <StartupFile>Grid.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,7 +21,19 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Bot.py" />
+    <Compile Include="bot.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main.py" />
+    <Compile Include="Grid.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SHIT.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tiles.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
