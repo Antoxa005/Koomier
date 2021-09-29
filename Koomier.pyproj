@@ -28,6 +28,9 @@
     <Compile Include="Grid.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MapEditor.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="SHIT.py">
       <SubType>Code</SubType>
     </Compile>

@@ -40,9 +40,9 @@ def UpdateTiles(listOfTiles):
         else:
             pygame.draw.line(window, (255, 255, 0), (tile.rect.x + tile.rect.width, tile.rect.y), (tile.rect.x + tile.rect.width, tile.rect.y + tile.rect.height), 5)
 def MakeFont(fontName, size, write, color, x, y):
-    Font = pygame.font.SysFont(fontName, size)
-    render_font = Font.render(write, True, color)
-    window.blit(render_font, (x, y))
+    font = pygame.font.SysFont(fontName, size)
+    renderFont = font.render(write, True, color)
+    window.blit(renderFont, (x, y))
 
 def ResetButtonClick():
     bot.rect.x, bot.rect.y = bot.ogX, bot.ogY
@@ -131,7 +131,7 @@ PrintButton = Button(1410, 110, side, side, PrintButtonClick, (100, 180, 0))
 ToggleMoveButton = Button(1410, 210, side, side, ToggleMoveButtonClick, (50, 50, 125))
 TeleportButton = Button(1410, 310, side, side, TeleportButtonClick, (255, 0, 255))
 StepByStepButton = Button(1410, 410, side, side, StepByStepButtonClick, (100, 0, 0))
-CheckButton = Button(1410, 510, side, side, CheckButtonClick, (255, 0, 255))
+CheckButton = Button(1410, 510, side, side, CheckButtonClick, (255, 255, 0))
 listOfButtons = [ResetButton, PrintButton, ToggleMoveButton, TeleportButton, StepByStepButton, CheckButton]
 
 timeOld = pygame.time.get_ticks()
