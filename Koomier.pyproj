@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>2b3c3c19-b55c-419f-8d59-f3c46995d366</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Grid.py</StartupFile>
+    <StartupFile>MapEditor.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

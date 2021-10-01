@@ -1,6 +1,22 @@
 import pygame
 from Tiles import Tile
 
+class Brush:
+    def __init__(self, onClick):
+        self.onClick = onClick
+
+class Button:
+    def __init__(self, x, y, width, height, func, color):
+        self.func = func
+        self.rect = pygame.Rect(x, y, width, height)
+        self.color = color
+        self.ogColor = color
+
+    def OnClick(self, point):
+        if self.rect.collidepoint(point):
+            self.func()
+            print("pog")
+
 
 side = 40
 pygame.init()
@@ -31,11 +47,88 @@ def UpdateTiles(listOfTiles):
         else:
             pygame.draw.line(window, (255, 255, 0), (tile.rect.x + tile.rect.width, tile.rect.y), (tile.rect.x + tile.rect.width, tile.rect.y + tile.rect.height), 5)
 
+        if tile.startPoint:
+            MakeFont("A", 20, "A", (0, 0, 0), tile.rect.centerx, tile.rect.centery)
+        elif tile.endPoint:
+            MakeFont("B", 20, "B", (0, 0, 0), tile.rect.centerx, tile.rect.centery)
+
+        if tile.needsToBeColored and not tile.isColored:
+            pygame.draw.circle(window, (200, 200, 200), (tile.rect.centerx, tile.rect.centery), side/8)
+
 listOfTiles = []
 for x in range(side * 16, -side, -side):
     for y in range(side * 16, -side, -side):
         tile = Tile(x, y, side, side, (0, 255, 0), False, False, False, False, False, False, False, False)
         listOfTiles.append(tile)
+
+def OnWallBrushClick():
+    allDistances = [mouseX - theTile.rect.left, theTile.rect.right - mouseX, mouseY - theTile.rect.top, theTile.rect.bottom - mouseY]
+    minDistance = min(allDistances)
+
+
+    if minDistance == allDistances[0]:
+        theTile.wallWest = True
+        index = listOfTiles.index(theTile)
+        listOfTiles[index+17].wallEast = True
+    if minDistance == allDistances[1]:
+        theTile.wallEast = True
+        index = listOfTiles.index(theTile)
+        listOfTiles[index-17].wallWest = True
+    if minDistance == allDistances[2]:
+        theTile.wallNorth = True
+        index = listOfTiles.index(theTile)
+        listOfTiles[index+1].wallSouth = True
+    if minDistance == allDistances[3]:
+        theTile.wallSouth = True
+        index = listOfTiles.index(theTile)
+        listOfTiles[index-1].wallNorth = True
+
+def NeedsToBeColoredBrushOnClick():
+
+    theTile.needsToBeColored = True
+
+def EraseBrushOnClick():
+    theTile.needsToBeColored = False
+
+    theTile.wallWest = False
+    index = listOfTiles.index(theTile)
+    listOfTiles[index+17].wallEast = False
+
+    theTile.wallEast = False
+    index = listOfTiles.index(theTile)
+    listOfTiles[index-17].wallWest = False
+
+    theTile.wallNorth = False
+    index = listOfTiles.index(theTile)
+    listOfTiles[index+1].wallSouth = False
+
+    theTile.wallSouth = False
+    index = listOfTiles.index(theTile)
+    listOfTiles[index-1].wallNorth = False
+
+
+wallBrush = Brush(OnWallBrushClick)
+needsToBeColoredBrush = Brush(NeedsToBeColoredBrushOnClick)
+eraseBrush = Brush(EraseBrushOnClick)
+
+activeBrush = wallBrush
+
+def wallBrushButtonClick():
+    activeBrush = wallBrush
+
+def needsToBeColoredBrushButtonClick():
+    activeBrush = needsToBeColoredBrush
+
+def eraseBrushButtonClick():
+    activeBrush = eraseBrush
+
+wallBrushButton = Button(1410, 10, side, side, wallBrushButtonClick, (100, 0, 0))
+needsToBeColoredBrushButton = Button(1410, 110, side, side, needsToBeColoredBrushButtonClick, (0, 100, 0))
+eraseBrushButton = Button(1410, 210, side, side, eraseBrushButtonClick, (0, 0, 100))
+listOfButtons = [wallBrushButton, needsToBeColoredBrushButton, eraseBrushButton]
+
+
+
 
 while run:
     clock.tick(60)
@@ -51,6 +144,10 @@ while run:
             if keys[pygame.K_ESCAPE]:
                 run = False
 
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            for button in listOfButtons:
+                button.OnClick(mousePos)
+
     left, middle, right = pygame.mouse.get_pressed(3)
     if left:
         mouseX, mouseY = pygame.mouse.get_pos()
@@ -58,36 +155,33 @@ while run:
 
         for tile in listOfTiles:
             if tile.rect.x == newMouseX and tile.rect.y == newMouseY:
-
-                allDistances = [mouseX - tile.rect.left, tile.rect.right - mouseX, mouseY - tile.rect.top, tile.rect.bottom - mouseY]
-                minDistance = min(allDistances)
-
-
-                if minDistance == allDistances[0]:
-                    tile.wallWest = True
-                    index = listOfTiles.index(tile)
-                    listOfTiles[index+17].wallEast = True
-                if minDistance == allDistances[1]:
-                    tile.wallEast = True
-                    index = listOfTiles.index(tile)
-                    listOfTiles[index-17].wallWest = True
-                if minDistance == allDistances[2]:
-                    tile.wallNorth = True
-                    index = listOfTiles.index(tile)
-                    listOfTiles[index+1].wallSouth = True
-                if minDistance == allDistances[3]:
-                    tile.wallSouth = True
-                    index = listOfTiles.index(tile)
-                    listOfTiles[index-1].wallNorth = True
-
-
+                theTile = tile
+                helper = "Some"
                 break
+            else:
+                helper = None
+
+
+        if helper != None:
+            activeBrush.onClick()
+
+
+
+    mousePos = pygame.mouse.get_pos()
+    for button in listOfButtons:
+        if button.rect.collidepoint(mousePos):
+            button.color = (100, 100, 100)
+        else:
+            button.color = button.ogColor
 
 
 
     window.fill((0, 0, 0))
 
     UpdateTiles(listOfTiles)
+
+    for button in listOfButtons:
+        pygame.draw.rect(window, button.color, button.rect)
 
 
     pygame.display.update()
