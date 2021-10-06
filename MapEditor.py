@@ -1,9 +1,11 @@
 import pygame
 from Tiles import Tile
+import pickle
 
 class Brush:
-    def __init__(self, onClick):
+    def __init__(self, onClick, name):
         self.onClick = onClick
+        self.name = name
 
 class Button:
     def __init__(self, x, y, width, height, func, color):
@@ -11,12 +13,6 @@ class Button:
         self.rect = pygame.Rect(x, y, width, height)
         self.color = color
         self.ogColor = color
-
-    def OnClick(self, point):
-        if self.rect.collidepoint(point):
-            self.func()
-            print("pog")
-
 
 side = 40
 pygame.init()
@@ -26,6 +22,11 @@ window = pygame.display.set_mode((screenWidth, screenHeight), pygame.HWSURFACE |
 
 run = True
 clock = pygame.time.Clock()
+
+def MakeFont(fontName, size, write, color, x, y):
+    font = pygame.font.SysFont(fontName, size)
+    renderFont = font.render(write, True, color)
+    window.blit(renderFont, (x, y))
 
 def UpdateTiles(listOfTiles):
     for tile in listOfTiles:
@@ -47,41 +48,42 @@ def UpdateTiles(listOfTiles):
         else:
             pygame.draw.line(window, (255, 255, 0), (tile.rect.x + tile.rect.width, tile.rect.y), (tile.rect.x + tile.rect.width, tile.rect.y + tile.rect.height), 5)
 
-        if tile.startPoint:
-            MakeFont("A", 20, "A", (0, 0, 0), tile.rect.centerx, tile.rect.centery)
-        elif tile.endPoint:
-            MakeFont("B", 20, "B", (0, 0, 0), tile.rect.centerx, tile.rect.centery)
-
         if tile.needsToBeColored and not tile.isColored:
             pygame.draw.circle(window, (200, 200, 200), (tile.rect.centerx, tile.rect.centery), side/8)
 
-listOfTiles = []
-for x in range(side * 16, -side, -side):
-    for y in range(side * 16, -side, -side):
-        tile = Tile(x, y, side, side, (0, 255, 0), False, False, False, False, False, False, False, False)
-        listOfTiles.append(tile)
+        if tile.startPoint:
+            MakeFont("A", 20, "A", (0, 0, 0), tile.rect.centerx, tile.rect.centery)
+        if tile.endPoint:
+            MakeFont("B", 20, "B", (0, 0, 0), tile.rect.centerx - 10, tile.rect.centery - 10)
+
 
 def OnWallBrushClick():
     allDistances = [mouseX - theTile.rect.left, theTile.rect.right - mouseX, mouseY - theTile.rect.top, theTile.rect.bottom - mouseY]
     minDistance = min(allDistances)
 
+    print("POG")
+
 
     if minDistance == allDistances[0]:
         theTile.wallWest = True
         index = listOfTiles.index(theTile)
-        listOfTiles[index+17].wallEast = True
+        if index <= len(listOfTiles) - 18:
+            listOfTiles[index+17].wallEast = True
     if minDistance == allDistances[1]:
         theTile.wallEast = True
         index = listOfTiles.index(theTile)
-        listOfTiles[index-17].wallWest = True
+        if index >= 17:
+            listOfTiles[index-17].wallWest = True
     if minDistance == allDistances[2]:
         theTile.wallNorth = True
         index = listOfTiles.index(theTile)
-        listOfTiles[index+1].wallSouth = True
+        if index <= len(listOfTiles) - 2:
+            listOfTiles[index+1].wallSouth = True
     if minDistance == allDistances[3]:
         theTile.wallSouth = True
         index = listOfTiles.index(theTile)
-        listOfTiles[index-1].wallNorth = True
+        if index >= 1:
+            listOfTiles[index-1].wallNorth = True
 
 def NeedsToBeColoredBrushOnClick():
 
@@ -106,29 +108,80 @@ def EraseBrushOnClick():
     index = listOfTiles.index(theTile)
     listOfTiles[index-1].wallNorth = False
 
+def StartPointBrushClick():
+    for tile in listOfTiles:
+        tile.startPoint = False
+    theTile.startPoint = True
 
-wallBrush = Brush(OnWallBrushClick)
-needsToBeColoredBrush = Brush(NeedsToBeColoredBrushOnClick)
-eraseBrush = Brush(EraseBrushOnClick)
+def EndPointBrushClick():
+    for tile in listOfTiles:
+        tile.endPoint = False
+    theTile.endPoint = True
 
-activeBrush = wallBrush
+
+wallBrush = Brush(OnWallBrushClick, "wallBrush")
+needsToBeColoredBrush = Brush(NeedsToBeColoredBrushOnClick, "needsToBeColoredBrush")
+eraseBrush = Brush(EraseBrushOnClick, "eraseBrush")
+startPointBrush = Brush(StartPointBrushClick, "startPointBrush")
+endPointBrush = Brush(EndPointBrushClick, "endPointBrush")
+listOfBrushes = [wallBrush, needsToBeColoredBrush, eraseBrush, startPointBrush, endPointBrush]
+
+activeBrush = needsToBeColoredBrush
 
 def wallBrushButtonClick():
-    activeBrush = wallBrush
+    activeBrush = listOfBrushes[0]
+    return activeBrush
 
 def needsToBeColoredBrushButtonClick():
-    activeBrush = needsToBeColoredBrush
+    activeBrush = listOfBrushes[1]
+    return activeBrush
 
 def eraseBrushButtonClick():
-    activeBrush = eraseBrush
+    activeBrush = listOfBrushes[2]
+    return activeBrush
 
-wallBrushButton = Button(1410, 10, side, side, wallBrushButtonClick, (100, 0, 0))
-needsToBeColoredBrushButton = Button(1410, 110, side, side, needsToBeColoredBrushButtonClick, (0, 100, 0))
-eraseBrushButton = Button(1410, 210, side, side, eraseBrushButtonClick, (0, 0, 100))
-listOfButtons = [wallBrushButton, needsToBeColoredBrushButton, eraseBrushButton]
+def endPointBrushButtonClick():
+    activeBrush = listOfBrushes[3]
+    return activeBrush
+
+def startPointBrushButtonClick():
+    activeBrush = listOfBrushes[4]
+    return activeBrush
+
+def saveLevelButtonOnClick():
+    shit = []
+    for tile in listOfTiles:
+        shit.append((tile.rect.x, tile.rect.y, tile.rect.width, tile.rect.height, tile.color, tile.wallNorth, tile.wallSouth, tile.wallWest, tile.wallEast, tile.needsToBeColored, tile.isColored, tile.startPoint, tile.endPoint))
+    pickle.dump(shit, open("Save", "wb"))
+
+def discardLevelButtonOnClick():
+    listOfTiles = []
+    for x in range(side * 16, -side, -side):
+        for y in range(side * 16, -side, -side):
+            tile = Tile(x, y, side, side, (0, 255, 0), False, False, False, False, False, False, False, False)
+            listOfTiles.append(tile)
+
+    return listOfTiles
 
 
+wallBrushButton = Button(1410, 10, 80, 80, wallBrushButtonClick, (100, 0, 0))
+needsToBeColoredBrushButton = Button(1410, 110, 80, 80, needsToBeColoredBrushButtonClick, (0, 100, 0))
+eraseBrushButton = Button(1410, 210, 80, 80, eraseBrushButtonClick, (0, 0, 100))
+startPointBrushButton = Button(1410, 310, 80, 80, startPointBrushButtonClick, (255, 255, 0))
+endPointBrushButton = Button(1410, 410, 80, 80, endPointBrushButtonClick, (100, 0, 200))
+saveLevelButton = Button(1410, 510, 80, 80, saveLevelButtonOnClick, (255, 0, 255))
+discardLevelButton = Button(1410, 610, 80, 80, discardLevelButtonOnClick, (255, 255, 255))
 
+listOfButtons = [wallBrushButton, needsToBeColoredBrushButton, eraseBrushButton, startPointBrushButton, endPointBrushButton, saveLevelButton, discardLevelButton]
+
+SaveList = pickle.load(open("Save", "rb"))
+listOfTiles = []
+for tile in SaveList:
+    listOfTiles.append(Tile(tile[0], tile[1], tile[2], tile[3], tile[4], tile[5], tile[6], tile[7], tile[8], tile[9], tile[10], tile[11], tile[12]))
+#for x in range(side * 16, -side, -side):
+#    for y in range(side * 16, -side, -side):
+#        tile = Tile(x, y, side, side, (0, 255, 0), False, False, False, False, False, False, False, False)
+#        listOfTiles.append(tile)
 
 while run:
     clock.tick(60)
@@ -145,8 +198,15 @@ while run:
                 run = False
 
         if event.type == pygame.MOUSEBUTTONDOWN:
+            mousePos = pygame.mouse.get_pos()
             for button in listOfButtons:
-                button.OnClick(mousePos)
+                if button.rect.collidepoint(mousePos):
+                    if (button == wallBrushButton or button == eraseBrushButton or button == needsToBeColoredBrushButton or button == startPointBrushButton or button == endPointBrushButton):
+                        activeBrush = button.func()
+                    elif button == discardLevelButton:
+                        listOfTiles = button.func()
+                    else:
+                        button.func()
 
     left, middle, right = pygame.mouse.get_pressed(3)
     if left:

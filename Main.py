@@ -1,8 +1,9 @@
 import pygame
 from Grid import bot
-from Tiles import listOfTiles
+from Tiles import standardListOfTiles
 
 side = 40
+listOfTiles = standardListOfTiles
 
 class Button:
     def __init__(self, x, y, width, height, func, color):

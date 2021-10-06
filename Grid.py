@@ -1,7 +1,8 @@
 from bot import Bot
-from Tiles import listOfTiles
+from Tiles import standardListOfTiles
+
 side = 40
-bot = Bot(side/4, side/4, side/2, side/2, side, side, (0, 0, 0), listOfTiles)
+bot = Bot(side/4, side/4, side/2, side/2, side, side, (0, 0, 0), standardListOfTiles)
 
 bot.Down()
 bot.Down()

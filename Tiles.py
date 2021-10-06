@@ -40,12 +40,12 @@ class Tile:
 
         self.image.fill(self.color)
 
-listOfTiles = []
+standardListOfTiles = []
 for x in range(side * 16, -side, -side):
     for y in range(side * 16, -side, -side):
         tile = Tile(x, y, side, side, (0, 255, 0), False, False, False, False, False, False, False, False)
-        listOfTiles.append(tile)
-for tile in listOfTiles:
+        standardListOfTiles.append(tile)
+for tile in standardListOfTiles:
     if tile.rect.x == 0:
         tile.wallWest = True
     if tile.rect.y == 0:
