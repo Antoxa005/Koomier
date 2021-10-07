@@ -8,18 +8,23 @@ g = 10
 answer = calculate(g)
 print(answer)
 
-a = {1: 'bot.Left()', 2: 'bot.Right()', 3: 'bot.Up()', 4: 'bot.Down()'}
+a = {1: 'bot.Left()', 2: 'bot.Right()', 3: 'bot.Up()', 4: 'bot.Down()', 5: 'bot.Color()', 6: 'bot.DeColor()'}
 
 print(list(a.values()))
 
 L = ['bot.Down()', 'bot.Right()', 'bot.Down()', 'bot.Down()', 'bot.Right()', 'bot.Up()', 'bot.Up()', 'bot.Right()', 'bot.Down()', 'bot.Down()', 'bot.Right()', 'bot.Up()', 'bot.Up()', 'bot.Right()', 'bot.Down()', 'bot.Down()', 'bot.Right()']
+L1 = []
 
-def Convert(string):
-    return a.get(string)
+def Convert(value, dict):
+    return list(dict.keys())[list(dict.values()).index(value)]
 
-L1 = list(map(Convert, L))
+def ConvertBack(key, dict):
+    return list(dict.values())[list(dict.keys()).index(key)]
 
-L2 = [1, 2, 1, 2, 3, 4, 3, 4, 1, 2, 1, 2, 3, 4, 3, 4]
+for i in L:
+    L1.append(Convert(i, a))
+
+print(list(L1))
 
 def Compare(array, comparand, startIndex):
     if startIndex + len(comparand) > len(array): return False
@@ -61,8 +66,6 @@ def ReplacePattern(dict, array, comparand, startIndex, endIndex, numOfRep):
         key = newKey
 
     for i in range(startIndex, endIndex):
-        print("Pog")
-        print(i)
         array.pop(startIndex)
 
     array.insert(startIndex, key)
@@ -94,9 +97,52 @@ def RunAll(dict, array):
     result = True
     while result:
         result = RunMult(dict, array)
-    print(array)
+    return array
 
-RunAll(a, L2)
+def CheckIfTuple(element):
+    L = [element]
+    returnList = []
+    for i in L:
+        i = ConvertBack(i, a)
+        if type(i) == str:
+            returnList.append(i)
+
+        else:
+            for e in i[0]:
+                L.append(e)
+
+    return returnList
+
+
+
+print(RunAll(a, L1))
+
+#ans = RunAll(a, L1)
+
+#realAns = []
+
+print(CheckIfTuple(7))
+
+
+
+
+    #if type(i) == tuple:
+    #    oneLine = "for i in range(" + str(i[1]) + "): "
+    #    while run:
+    #        for e in i[0]:
+    #            if e != 1 or e != 2 or e != 3 or e != 4 or e != 5 or e != 6:
+    #                run = True
+    #                i = e
+    #            else:
+    #                run = False
+
+
+    #else:
+    #    realAns.append(ConvertBack(i, a))
+
+
+
+
 
 
 #print(GetComparand(L2, 0, 1))
