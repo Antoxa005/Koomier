@@ -1,5 +1,4 @@
 import pygame
-from Tiles import standardListOfTiles
 side = 40
 
 class Bot:

@@ -1,4 +1,5 @@
 import pygame
+import pickle
 side = 40
 
 class Tile:
@@ -66,3 +67,9 @@ for tile in standardListOfTiles:
 
     if tile.rect.y == side * 8:
         tile.needsToBeColored = True
+
+SaveList = pickle.load(open("Save", "rb"))
+listOfTiles = []
+for tile in SaveList:
+    listOfTiles.append(Tile(tile[0], tile[1], tile[2], tile[3], tile[4], tile[5], tile[6], tile[7], tile[8], tile[9], tile[10], tile[11], tile[12]))
+
