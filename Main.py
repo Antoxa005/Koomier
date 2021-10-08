@@ -1,15 +1,17 @@
 import pygame
 from Grid import bot
 from Tiles import listOfTiles
+from SHIT import *
 
 side = 40
 
 class Button:
-    def __init__(self, x, y, width, height, func, color):
+    def __init__(self, x, y, width, height, func, color, name):
         self.func = func
         self.rect = pygame.Rect(x, y, width, height)
         self.color = color
         self.ogColor = color
+        self.name = name
 
     def OnClick(self, point):
         if self.rect.collidepoint(point):
@@ -19,6 +21,8 @@ pygame.init()
 info = pygame.display.Info()
 screenWidth, screenHeight = info.current_w, info.current_h
 window = pygame.display.set_mode((screenWidth, screenHeight), pygame.HWSURFACE | pygame.DOUBLEBUF)
+
+mainDict = {1: 'bot.Left()', 2: 'bot.Right()', 3: 'bot.Up()', 4: 'bot.Down()', 5: 'bot.Color()', 6: 'bot.DeColor()'}
 
 def UpdateTiles(listOfTiles):
     for tile in listOfTiles:
@@ -53,8 +57,13 @@ def ResetButtonClick():
         tile.DeColor()
 def PrintButtonClick():
     print("--------------------------------------")
-    for ans in ansCode:
-        print(ans)
+    #for ans in ansCode:
+    #    print(ans)
+    #ansCode.clear()
+    numAnsCode = []
+    for i in ansCode:
+        numAnsCode.append(Convert(i, mainDict))
+    print(GenerateAll(mainDict, RunAll(mainDict, numAnsCode)))
     ansCode.clear()
 def ToggleMoveButtonClick():
     if bot.movementEnabled:
@@ -126,12 +135,12 @@ run = True
 ansCode = []
 clock = pygame.time.Clock()
 
-ResetButton = Button(1410, 10, side, side, ResetButtonClick, (0, 0, 0))
-PrintButton = Button(1410, 110, side, side, PrintButtonClick, (100, 180, 0))
-ToggleMoveButton = Button(1410, 210, side, side, ToggleMoveButtonClick, (50, 50, 125))
-TeleportButton = Button(1410, 310, side, side, TeleportButtonClick, (255, 0, 255))
-StepByStepButton = Button(1410, 410, side, side, StepByStepButtonClick, (100, 0, 0))
-CheckButton = Button(1410, 510, side, side, CheckButtonClick, (255, 255, 0))
+ResetButton = Button(1410, 10, 80, 80, ResetButtonClick, (255, 165, 0), "reset")
+PrintButton = Button(1410, 110, 80, 80, PrintButtonClick, (0, 255, 0), "print")
+ToggleMoveButton = Button(1410, 210, 80, 80, ToggleMoveButtonClick, (0, 0, 255), "movement")
+TeleportButton = Button(1410, 310, 80, 80, TeleportButtonClick, (255, 0, 255), "teleport")
+StepByStepButton = Button(1410, 410, 80, 80, StepByStepButtonClick, (255, 0, 0), "step by step")
+CheckButton = Button(1410, 510, 80, 80, CheckButtonClick, (255, 255, 0), "check errors")
 listOfButtons = [ResetButton, PrintButton, ToggleMoveButton, TeleportButton, StepByStepButton, CheckButton]
 
 timeOld = pygame.time.get_ticks()
@@ -200,6 +209,7 @@ while run:
 
     for button in listOfButtons:
         pygame.draw.rect(window, button.color, button.rect)
+        MakeFont("ButtonText", 25, button.name, (0, 0, 0), button.rect.centerx - 40, button.rect.centery - 10)
 
     pygame.display.set_caption(str(clock.get_fps()))
 

@@ -8,11 +8,12 @@ class Brush:
         self.name = name
 
 class Button:
-    def __init__(self, x, y, width, height, func, color):
+    def __init__(self, x, y, width, height, func, color, name):
         self.func = func
         self.rect = pygame.Rect(x, y, width, height)
         self.color = color
         self.ogColor = color
+        self.name = name
 
 side = 40
 pygame.init()
@@ -91,22 +92,26 @@ def NeedsToBeColoredBrushOnClick():
 
 def EraseBrushOnClick():
     theTile.needsToBeColored = False
+    theTile.startPoint = False
+    theTile.endPoint = False
 
     theTile.wallWest = False
     index = listOfTiles.index(theTile)
-    listOfTiles[index+17].wallEast = False
-
+    if index <= len(listOfTiles) - 18:
+        listOfTiles[index+17].wallEast = False
     theTile.wallEast = False
     index = listOfTiles.index(theTile)
-    listOfTiles[index-17].wallWest = False
-
+    if index >= 17:
+        listOfTiles[index-17].wallWest = False
     theTile.wallNorth = False
     index = listOfTiles.index(theTile)
-    listOfTiles[index+1].wallSouth = False
-
+    if index <= len(listOfTiles) - 2:
+        listOfTiles[index+1].wallSouth = False
     theTile.wallSouth = False
     index = listOfTiles.index(theTile)
-    listOfTiles[index-1].wallNorth = False
+    if index >= 1:
+        listOfTiles[index-1].wallNorth = False
+
 
 def StartPointBrushClick():
     for tile in listOfTiles:
@@ -164,13 +169,13 @@ def discardLevelButtonOnClick():
     return listOfTiles
 
 
-wallBrushButton = Button(1410, 10, 80, 80, wallBrushButtonClick, (100, 0, 0))
-needsToBeColoredBrushButton = Button(1410, 110, 80, 80, needsToBeColoredBrushButtonClick, (0, 100, 0))
-eraseBrushButton = Button(1410, 210, 80, 80, eraseBrushButtonClick, (0, 0, 100))
-startPointBrushButton = Button(1410, 310, 80, 80, startPointBrushButtonClick, (255, 255, 0))
-endPointBrushButton = Button(1410, 410, 80, 80, endPointBrushButtonClick, (100, 0, 200))
-saveLevelButton = Button(1410, 510, 80, 80, saveLevelButtonOnClick, (255, 0, 255))
-discardLevelButton = Button(1410, 610, 80, 80, discardLevelButtonOnClick, (255, 255, 255))
+wallBrushButton = Button(1410, 10, 80, 80, wallBrushButtonClick, (255, 0, 0), "wall")
+needsToBeColoredBrushButton = Button(1410, 110, 80, 80, needsToBeColoredBrushButtonClick, (0, 255, 0), "have to color")
+eraseBrushButton = Button(1410, 210, 80, 80, eraseBrushButtonClick, (0, 0, 255), "erase")
+startPointBrushButton = Button(1410, 310, 80, 80, startPointBrushButtonClick, (255, 255, 0), "start")
+endPointBrushButton = Button(1410, 410, 80, 80, endPointBrushButtonClick, (165, 0, 255), "end")
+saveLevelButton = Button(1410, 510, 80, 80, saveLevelButtonOnClick, (255, 0, 255), "save")
+discardLevelButton = Button(1410, 610, 80, 80, discardLevelButtonOnClick, (50, 50, 50), "delete")
 
 listOfButtons = [wallBrushButton, needsToBeColoredBrushButton, eraseBrushButton, startPointBrushButton, endPointBrushButton, saveLevelButton, discardLevelButton]
 
@@ -236,12 +241,13 @@ while run:
 
 
 
-    window.fill((0, 0, 0))
+    window.fill((255, 255, 255))
 
     UpdateTiles(listOfTiles)
 
     for button in listOfButtons:
         pygame.draw.rect(window, button.color, button.rect)
+        MakeFont("ButtonText", 20, button.name, (0, 0, 0), button.rect.centerx - 40, button.rect.centery)
 
 
     pygame.display.update()

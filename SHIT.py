@@ -1,16 +1,14 @@
-import math
+#import math
 
-def calculate(a):
-    a += 1
-    return a
+#def calculate(a):
+#    a += 1
+#    return a
 
-g = 10
-answer = calculate(g)
-print(answer)
+#g = 10
+#answer = calculate(g)
 
 a = {1: 'bot.Left()', 2: 'bot.Right()', 3: 'bot.Up()', 4: 'bot.Down()', 5: 'bot.Color()', 6: 'bot.DeColor()'}
 
-print(list(a.values()))
 
 L = ['bot.Down()', 'bot.Right()', 'bot.Down()', 'bot.Down()', 'bot.Right()', 'bot.Up()', 'bot.Up()', 'bot.Right()', 'bot.Down()', 'bot.Down()', 'bot.Right()', 'bot.Up()', 'bot.Up()', 'bot.Right()', 'bot.Down()', 'bot.Down()', 'bot.Right()']
 L1 = []
@@ -24,7 +22,6 @@ def ConvertBack(key, dict):
 for i in L:
     L1.append(Convert(i, a))
 
-print(list(L1))
 
 def Compare(array, comparand, startIndex):
     if startIndex + len(comparand) > len(array): return False
@@ -99,50 +96,37 @@ def RunAll(dict, array):
         result = RunMult(dict, array)
     return array
 
-def CheckIfTuple(element):
-    L = [element]
-    returnList = []
-    for i in L:
-        i = ConvertBack(i, a)
-        if type(i) == str:
-            returnList.append(i)
 
-        else:
-            for e in i[0]:
-                L.append(e)
+def Generate(key, value):
+    if type(value) == str:
+        return "def f" + str(key) + "(bot): " + value + "\n"
+    else:
+        s = ""
+        x = value[0]
+        for j in range(len(x)):
+            s += "        f" + str(x[j]) + "(bot)" + "\n"
+        return "def f" + str(key) + "(bot): " + "\n" + "    for i in range(" + str(value[1]) + "):" + "\n" + s
 
-    return returnList
+def GenerateRun(array):
+    s = ""
+    for i in array:
+        s += "    f" + str(i) + "(bot)" + "\n"
+    return "def Run(bot):" + "\n" + s
 
+def GenerateAll(dict, array):
+    s = ""
+    keys = dict.keys()
+    for i in keys:
+        s += Generate(i, dict.get(i))
 
+    s += GenerateRun(array) + "\n"
+    s += "Run(bot)"
 
-print(RunAll(a, L1))
-
-#ans = RunAll(a, L1)
-
-#realAns = []
-
-print(CheckIfTuple(7))
-
-
-
-
-    #if type(i) == tuple:
-    #    oneLine = "for i in range(" + str(i[1]) + "): "
-    #    while run:
-    #        for e in i[0]:
-    #            if e != 1 or e != 2 or e != 3 or e != 4 or e != 5 or e != 6:
-    #                run = True
-    #                i = e
-    #            else:
-    #                run = False
-
-
-    #else:
-    #    realAns.append(ConvertBack(i, a))
+    return s
 
 
 
-
-
-
-#print(GetComparand(L2, 0, 1))
+#print(L1)
+#print(RunAll(a, L1))
+print(GenerateRun(RunAll(a, L1)))
+#print(GenerateAll(a, RunAll(a, L1)))
