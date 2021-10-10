@@ -128,5 +128,5 @@ def GenerateAll(dict, array):
 
 #print(L1)
 #print(RunAll(a, L1))
-print(GenerateRun(RunAll(a, L1)))
+#print(GenerateRun(RunAll(a, L1)))
 #print(GenerateAll(a, RunAll(a, L1)))

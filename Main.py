@@ -43,6 +43,22 @@ def UpdateTiles(listOfTiles):
             pygame.draw.line(window, (0, 0, 150), (tile.rect.x + tile.rect.width, tile.rect.y), (tile.rect.x + tile.rect.width, tile.rect.y + tile.rect.height), 5)
         else:
             pygame.draw.line(window, (255, 255, 0), (tile.rect.x + tile.rect.width, tile.rect.y), (tile.rect.x + tile.rect.width, tile.rect.y + tile.rect.height), 5)
+
+        if tile.startPoint:
+            MakeFont("A", 20, "A", (0, 0, 0), tile.rect.centerx, tile.rect.centery)
+        elif tile.endPoint:
+            MakeFont("B", 20, "B", (0, 0, 0), tile.rect.centerx, tile.rect.centery)
+        if tile.needsToBeColored and not tile.isColored:
+            pygame.draw.circle(window, (200, 200, 200), (tile.rect.centerx, tile.rect.centery), side/8)
+
+        if tile.needsToBeColored and not tile.isColored:
+            pygame.draw.circle(window, (200, 200, 200), (tile.rect.centerx, tile.rect.centery), side/8)
+
+def UpdateButtons(listOfButtons):
+    for button in listOfButtons:
+        pygame.draw.rect(window, button.color, button.rect)
+        MakeFont("ButtonText", 25, button.name, (0, 0, 0), button.rect.centerx - 40, button.rect.centery - 10)
+
 def MakeFont(fontName, size, write, color, x, y):
     font = pygame.font.SysFont(fontName, size)
     renderFont = font.render(write, True, color)
@@ -92,18 +108,11 @@ def StepByStepButtonClick():
         window.fill((255, 255, 255))
 
         UpdateTiles(listOfTiles)
-        for tile in listOfTiles:
-            if tile.startPoint:
-                MakeFont("A", 20, "A", (0, 0, 0), tile.rect.centerx, tile.rect.centery)
-            elif tile.endPoint:
-                MakeFont("B", 20, "B", (0, 0, 0), tile.rect.centerx, tile.rect.centery)
-            if tile.needsToBeColored and not tile.isColored:
-                pygame.draw.circle(window, (200, 200, 200), (tile.rect.centerx, tile.rect.centery), side/8)
 
         pygame.draw.rect(window, bot.color, bot.rect)
 
-        for button in listOfButtons:
-            pygame.draw.rect(window, button.color, button.rect)
+        UpdateButtons(listOfButtons)
+
         pygame.display.update()
     if bot.broken:
         bot.color = bot.brokenColor
@@ -143,9 +152,15 @@ StepByStepButton = Button(1410, 410, 80, 80, StepByStepButtonClick, (255, 0, 0),
 CheckButton = Button(1410, 510, 80, 80, CheckButtonClick, (255, 255, 0), "check errors")
 listOfButtons = [ResetButton, PrintButton, ToggleMoveButton, TeleportButton, StepByStepButton, CheckButton]
 
-timeOld = pygame.time.get_ticks()
+MainTimeOld = pygame.time.get_ticks()
 while run:
+    MainTimeNew = pygame.time.get_ticks()
+    if MainTimeNew - MainTimeOld < 4:
+        pygame.time.wait(6 - (MainTimeNew - MainTimeOld))
+    MainTimeOld = MainTimeNew
     clock.tick(60)
+
+
 
     timeNew = pygame.time.get_ticks()
     for event in pygame.event.get():
@@ -196,20 +211,10 @@ while run:
     window.fill((255, 255, 255))
 
     UpdateTiles(listOfTiles)
-    for tile in listOfTiles:
-        if tile.startPoint:
-            MakeFont("A", 20, "A", (0, 0, 0), tile.rect.centerx, tile.rect.centery)
-        elif tile.endPoint:
-            MakeFont("B", 20, "B", (0, 0, 0), tile.rect.centerx, tile.rect.centery)
-
-        if tile.needsToBeColored and not tile.isColored:
-            pygame.draw.circle(window, (200, 200, 200), (tile.rect.centerx, tile.rect.centery), side/8)
 
     pygame.draw.rect(window, bot.color, bot.rect)
 
-    for button in listOfButtons:
-        pygame.draw.rect(window, button.color, button.rect)
-        MakeFont("ButtonText", 25, button.name, (0, 0, 0), button.rect.centerx - 40, button.rect.centery - 10)
+    UpdateButtons(listOfButtons)
 
     pygame.display.set_caption(str(clock.get_fps()))
 
