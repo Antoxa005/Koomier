@@ -124,6 +124,103 @@ def GenerateAll(dict, array):
 
     return s
 
+# ----------------------------------
+
+def EquationMaker(point1, point2):
+    x1 = point1[0]
+    y1 = point1[1]
+
+    x2 = point2[0]
+    y2 = point2[1]
+
+    if x1 == x2:
+        return ("x", x1, None, None)
+
+    if y1 == y2:
+        return ("y", 0, y1, None)
+
+    slopeX = x1 - x2
+    slopeY = y1 - y2
+
+    k = (slopeY / slopeX)
+    b = y1 - k * x1
+
+    if y1 > y2:
+        return ("y", k, b, x2 < x1)
+    else:
+        return ("y", k, b, x2 > x1)
+
+def PointChecker(equation, point):
+    k = equation[1]
+    b = equation[2]
+
+    XorY = equation[0]
+    slope = equation[3]
+
+    x = point[0]
+    y = point[1]
+
+    if XorY == "x":
+        if x >= k:
+            return True
+        else:
+            return False
+
+    if slope == None:
+        if y >= b:
+            return True
+        else:
+            return False
+
+    elif slope:
+        newY = k * x + b
+        if newY <= y:
+            return True
+        else:
+            return False
+
+    else:
+        newY = -k * x + b
+        if newY <= y:
+            return True
+        else:
+            return False
+
+def calculate(point1, point2, point3, checkpoint):
+    equation1 = EquationMaker(point1, point2)
+    equation2 = EquationMaker(point1, point3)
+    equation3 = EquationMaker(point3, point2)
+
+    slope1 = equation1[3]
+    slope2 = equation2[3]
+    slope3 = equation3[3]
+
+    point = checkpoint
+
+    check1 = PointChecker(equation1, point)
+    check2 = PointChecker(equation2, point)
+    check3 = PointChecker(equation3, point)
+
+    if (check1 == check2 and check1 != check3) or (check3 == check2 and check1 != check3) or (check1 == check3 and check1 != check2):
+        return "In"
+    else:
+        return "Out"
+
+point1 = list(map(int, input().split()))
+point2 = list(map(int, input().split()))
+point3 = list(map(int, input().split()))
+point4 = list(map(int, input().split()))
+
+print(calculate(point1,
+point2,
+point3,
+point4))
+
+
+
+
+
+
 
 
 #print(L1)
