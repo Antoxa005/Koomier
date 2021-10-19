@@ -248,7 +248,5 @@ while run:
     for button in listOfButtons:
         pygame.draw.rect(window, button.color, button.rect)
         MakeFont("ButtonText", 20, button.name, (0, 0, 0), button.rect.centerx - 40, button.rect.centery)
-
-
     pygame.display.update()
 pygame.quit()
