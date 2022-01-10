@@ -1,7 +1,7 @@
 import pygame
 from Grid import bot
 from Tiles import listOfTiles
-from SHIT import *
+from SHIT import GenerateAll
 
 side = 40
 

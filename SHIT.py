@@ -1,11 +1,7 @@
-#import math
-
-#def calculate(a):
-#    a += 1
-#    return a
-
-#g = 10
-#answer = calculate(g)
+import math
+import pygame
+import numpy as np
+import random
 
 a = {1: 'bot.Left()', 2: 'bot.Right()', 3: 'bot.Up()', 4: 'bot.Down()', 5: 'bot.Color()', 6: 'bot.DeColor()'}
 
@@ -206,15 +202,15 @@ def calculate(point1, point2, point3, checkpoint):
     else:
         return "Out"
 
-point1 = list(map(int, input().split()))
-point2 = list(map(int, input().split()))
-point3 = list(map(int, input().split()))
-point4 = list(map(int, input().split()))
+#point1 = list(map(int, input().split()))
+#point2 = list(map(int, input().split()))
+#point3 = list(map(int, input().split()))
+#point4 = list(map(int, input().split()))
 
-print(calculate(point1,
-point2,
-point3,
-point4))
+#print(calculate(point1,
+#point2,
+#point3,
+#point4))
 
 
 
@@ -227,3 +223,109 @@ point4))
 #print(RunAll(a, L1))
 #print(GenerateRun(RunAll(a, L1)))
 #print(GenerateAll(a, RunAll(a, L1)))
+
+
+
+pygame.init()
+info = pygame.display.Info()
+screenWidth, screenHeight = info.current_w, info.current_h
+window = pygame.display.set_mode((screenWidth, screenHeight), pygame.HWSURFACE | pygame.DOUBLEBUF)
+
+run = True
+
+kelp = True
+
+
+def GetPoints(f, numOfPoints, a, b):
+    listOfPoints = []
+
+    for i in range(0, numOfPoints):
+        x = a + i * (b - a) / numOfPoints
+        y = f(x)
+        listOfPoints.append((x, y))
+
+
+    return listOfPoints
+
+
+def ConvertToScreen(listOfPoints, a, b, c, d):
+    newPointList = []
+    for point in listOfPoints:
+        x = point[0]
+        y = point[1]
+
+        screenX , screenY = (x - a) * screenWidth / (b - a), (y - c) * screenHeight / (d - c)
+
+        newPoint = (screenX, screenY)
+        newPointList.append(newPoint)
+
+    return newPointList
+
+def PlotGraph(listOfPoints):
+    for point in listOfPoints:
+        index = listOfPoints.index(point)
+
+        if len(listOfPoints) > index + 1:
+            point2 = listOfPoints[index+1]
+            pygame.draw.line(window, (255, 0, 0), point, point2, 5)
+
+            pygame.display.update()
+
+            #print(point2)
+            #print(point)
+            #print()
+
+
+def f1(x):
+    return np.arcsin(x)
+
+def f2(x):
+    return 3 * x + 5
+
+d = -5
+
+
+a = -10
+b = 10
+c = 5
+
+a = -screenWidth / 100
+b = screenWidth / 100
+c = screenHeight / 100
+d = -screenHeight / 100
+
+
+
+points1 = GetPoints(f1, 100, a, b)
+
+convertedPoints1 = ConvertToScreen(points1, a, b, c, d)
+
+points2 = GetPoints(f2, 100, a, b)
+
+convertedPoints2 = ConvertToScreen(points2, a, b, c, d)
+
+
+window.fill((0, 0, 0))
+
+pygame.draw.line(window, (255, 255, 255), (screenWidth / 2, screenHeight), (screenWidth / 2, 0), 5)
+pygame.draw.line(window, (255, 255, 255), (screenWidth, screenHeight / 2), (0, screenHeight / 2), 5)
+
+
+PlotGraph(convertedPoints1)
+
+
+
+
+
+pygame.display.update()
+
+while run:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+
+        if event.type == pygame.KEYDOWN:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_ESCAPE]:
+                run = False
+pygame.quit()
