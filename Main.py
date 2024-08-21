@@ -1,7 +1,7 @@
 import pygame
 from Grid import bot
 from Tiles import listOfTiles
-from SHIT import GenerateAll
+from SHIT import *
 
 side = 40
 
@@ -94,15 +94,18 @@ def TeleportButtonClick():
         print("ERROR: BOT BROKEN")
 
     for i in bot.path:
-        if i[2] == True:
-            tile1 = bot.FindTileByCoordinate(i[0]-side/4, i[1]-side/4)
+        tile1 = bot.FindTileByCoordinate(i[0]-side/4, i[1]-side/4)
+        if i[2] == True:            
             tile1.Color((255, 0, 0))
+        else:
+            tile1.DeColor()
 def StepByStepButtonClick():
     ResetButtonClick()
     for i in bot.path:
         pygame.time.wait(100)
         bot.rect.x = i[0]
         bot.rect.y = i[1]
+        print(i)
         if i[2] == True:
             bot.OtherColor()
         window.fill((255, 255, 255))
@@ -144,12 +147,12 @@ run = True
 ansCode = []
 clock = pygame.time.Clock()
 
-ResetButton = Button(1410, 10, 80, 80, ResetButtonClick, (255, 165, 0), "reset")
-PrintButton = Button(1410, 110, 80, 80, PrintButtonClick, (0, 255, 0), "print")
-ToggleMoveButton = Button(1410, 210, 80, 80, ToggleMoveButtonClick, (0, 0, 255), "movement")
-TeleportButton = Button(1410, 310, 80, 80, TeleportButtonClick, (255, 0, 255), "teleport")
-StepByStepButton = Button(1410, 410, 80, 80, StepByStepButtonClick, (255, 0, 0), "step by step")
-CheckButton = Button(1410, 510, 80, 80, CheckButtonClick, (255, 255, 0), "check errors")
+ResetButton = Button(1310, 10, 80, 80, ResetButtonClick, (255, 165, 0), "reset")
+PrintButton = Button(1310, 110, 80, 80, PrintButtonClick, (0, 255, 0), "print")
+ToggleMoveButton = Button(1310, 210, 80, 80, ToggleMoveButtonClick, (0, 0, 255), "movement")
+TeleportButton = Button(1310, 310, 80, 80, TeleportButtonClick, (255, 0, 255), "teleport")
+StepByStepButton = Button(1310, 410, 80, 80, StepByStepButtonClick, (255, 0, 0), "step by step")
+CheckButton = Button(1310, 510, 80, 80, CheckButtonClick, (255, 255, 0), "check errors")
 listOfButtons = [ResetButton, PrintButton, ToggleMoveButton, TeleportButton, StepByStepButton, CheckButton]
 
 MainTimeOld = pygame.time.get_ticks()

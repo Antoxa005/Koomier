@@ -169,13 +169,13 @@ def discardLevelButtonOnClick():
     return listOfTiles
 
 
-wallBrushButton = Button(1410, 10, 80, 80, wallBrushButtonClick, (255, 0, 0), "wall")
-needsToBeColoredBrushButton = Button(1410, 110, 80, 80, needsToBeColoredBrushButtonClick, (0, 255, 0), "have to color")
-eraseBrushButton = Button(1410, 210, 80, 80, eraseBrushButtonClick, (0, 0, 255), "erase")
-startPointBrushButton = Button(1410, 310, 80, 80, startPointBrushButtonClick, (255, 255, 0), "start")
-endPointBrushButton = Button(1410, 410, 80, 80, endPointBrushButtonClick, (165, 0, 255), "end")
-saveLevelButton = Button(1410, 510, 80, 80, saveLevelButtonOnClick, (255, 0, 255), "save")
-discardLevelButton = Button(1410, 610, 80, 80, discardLevelButtonOnClick, (50, 50, 50), "delete")
+wallBrushButton = Button(1310, 10, 80, 80, wallBrushButtonClick, (255, 0, 0), "wall")
+needsToBeColoredBrushButton = Button(1310, 110, 80, 80, needsToBeColoredBrushButtonClick, (0, 255, 0), "have to color")
+eraseBrushButton = Button(1310, 210, 80, 80, eraseBrushButtonClick, (0, 0, 255), "erase")
+startPointBrushButton = Button(1310, 310, 80, 80, startPointBrushButtonClick, (255, 255, 0), "start")
+endPointBrushButton = Button(1310, 410, 80, 80, endPointBrushButtonClick, (165, 0, 255), "end")
+saveLevelButton = Button(1310, 510, 80, 80, saveLevelButtonOnClick, (255, 0, 255), "save")
+discardLevelButton = Button(1310, 610, 80, 80, discardLevelButtonOnClick, (50, 50, 50), "delete")
 
 listOfButtons = [wallBrushButton, needsToBeColoredBrushButton, eraseBrushButton, startPointBrushButton, endPointBrushButton, saveLevelButton, discardLevelButton]
 

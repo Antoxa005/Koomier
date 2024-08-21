@@ -142,7 +142,11 @@ class Bot:
         tile.Color((255, 0, 0))
 
     def DeColor(self):
-        self.MoveFindTile().DeColor()
+        tile = self.MoveFindTile()
+        if not tile.isColored:
+            self.path.append((self.newRect.x, self.newRect.y, True))
+        else:
+            self.path.append((self.newRect.x, self.newRect.y, False))
 
     def FindTileByCoordinate(self, x, y):
         for tile in self.listOfTiles:
